@@ -2,7 +2,7 @@ local M = {}
 
 -- 🔍 Поиск корня проекта (ищем package.json или node_modules)
 local function find_project_root()
-  local path = vim.fn.expand "%:p:h" -- директория текущего файла
+  local path = vim.fn.expand("%:p:h") -- директория текущего файла
   local sep = package.config:sub(1, 1)
   local function exists(p)
     return vim.fn.empty(vim.fn.glob(p)) == 0
@@ -17,14 +17,14 @@ local function find_project_root()
 end
 
 function M.setup()
-  local dap = require "dap"
-  local mason_dap = require "mason-nvim-dap"
+  local dap = require("dap")
+  local mason_dap = require("mason-nvim-dap")
 
-  mason_dap.setup {
+  mason_dap.setup({
     ensure_installed = { "python", "node2", "js", "pwa-node" },
     automatic_installation = true,
     handlers = {},
-  }
+  })
 
   dap.adapters["pwa-node"] = {
     type = "server",
