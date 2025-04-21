@@ -32,6 +32,11 @@ vim.keymap.set("i", "<c-j>", "<DOWN>")
 vim.keymap.set("i", "<c-h>", "<LEFT>")
 vim.keymap.set("i", "<c-l>", "<RIGHT>")
 
+-- -- Terminal
+vim.keymap.set("n", "<leader>wtf", ":ToggleTerm direction=float<CR>")
+vim.keymap.set("n", "<leader>wth", ":ToggleTerm direction=horizontal<CR>")
+vim.keymap.set("n", "<leader>wtv", ":ToggleTerm direction=vertical size=40<CR>")
+
 -- WhichKey ( Must be last! )
 vim.keymap.set("n", "<leader>o", ":Neotree float git_status<CR>")
 -- vim.g.mapleader = " "
