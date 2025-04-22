@@ -44,6 +44,11 @@ function M.setup()
     end
   end, "DAP Breakpoints")
 
+  set_keymap("<leader>dv", function()
+    if pcall(require("telescope").extensions.dap.variables) then
+      vim.notify("DAP Variables", vim.log.levels.INFO)
+    end
+  end, "DAP Variables")
 end
 
 return M
