@@ -1,4 +1,4 @@
-return {
+local dapPlugin = {
   {
     "mfussenegger/nvim-dap",
     dependencies = {
@@ -56,7 +56,7 @@ return {
       end
 
       -- Закрытие окна дебага после завершения сессии
-      dap.listeners.after.event_terminated["close_debug"] = function()
+      dap.listeners.after.event_terminated[""] = function()
         dap.close() -- Закрывает все окна, связанные с дебагом
       end
 
@@ -96,9 +96,11 @@ return {
       -- end
     end,
     config = function()
-      require("config.dap-config").setup()
+      require("plugins.dap-config").setup()
       require("plugins.dap.telescope-dap").setup()
       require("plugins.dap.dap-virtual-text").setup()
     end,
   },
 }
+
+Ice.plugins["nvim-dap"] = dapPlugin
