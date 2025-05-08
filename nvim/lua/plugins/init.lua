@@ -1,6 +1,4 @@
-require "plugins.lazy"
-require "plugins.config"
-require "plugins.colorscheme"
-require "plugins.keymap"
-require "plugins.dap"
-require "lsp"
+require("plugins.dap")
+require("plugins.telescope")
+require("plugins.toggleTerm")
+require("config.keymap")

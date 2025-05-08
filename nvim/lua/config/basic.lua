@@ -4,9 +4,9 @@ local opt = vim.opt
 -- This MUST NOT be en_US, but en_US.UTF-8
 -- I originally set it to en_US without UTF-8 and `yGp` ceased to work
 -- It just threw an 'E353: Nothing in register "' error at me
-vim.cmd "language en_US.UTF-8"
+vim.cmd("language en_US.UTF-8")
 
-vim.cmd "syntax off"
+vim.cmd("syntax off")
 g.encoding = "UTF-8"
 opt.fileencoding = "utf-8"
 
@@ -60,7 +60,7 @@ opt.writebackup = false
 opt.swapfile = false
 
 -- Time to wait for a sequence of key combination
-opt.timeoutlen = 500
+opt.timeoutlen = 100
 
 -- Split window from below and right
 opt.splitbelow = true
@@ -88,31 +88,27 @@ opt.foldlevel = 99
 opt.foldlevelstart = 99
 opt.foldenable = false
 
-if require("core.utils").is_windows then
-    opt.shellslash = true
-end
-
 vim.api.nvim_create_autocmd("TermOpen", {
-    callback = function()
-        vim.wo.number = false
-        vim.wo.relativenumber = false
-    end,
+	callback = function()
+		vim.wo.number = false
+		vim.wo.relativenumber = false
+	end,
 })
 
 opt.shadafile = "NONE"
 vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdwinEnter" }, {
-    once = true,
-    callback = function()
-        local shada = vim.fn.stdpath "state" .. "/shada/main.shada"
-        vim.o.shadafile = shada
-        vim.cmd("rshada! " .. shada)
-    end,
+	once = true,
+	callback = function()
+		local shada = vim.fn.stdpath("state") .. "/shada/main.shada"
+		vim.o.shadafile = shada
+		vim.cmd("rshada! " .. shada)
+	end,
 })
 
 vim.api.nvim_create_autocmd("CmdwinEnter", {
-    callback = function()
-        vim.cmd "startinsert"
-        vim.wo.number = false
-        vim.wo.relativenumber = false
-    end,
+	callback = function()
+		vim.cmd("startinsert")
+		vim.wo.number = false
+		vim.wo.relativenumber = false
+	end,
 })

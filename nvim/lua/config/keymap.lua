@@ -1,19 +1,11 @@
-local utils = require "plugins.utils"
-
-Ice.keymap.plugins = {
-    select_colorscheme = { "n", "<C-i><C-t>", utils.select_colorscheme },
-    lazy_profile = { "n", "<leader>ul", "<Cmd>Lazy profile<CR>" },
-    view_configuration = { "n", "<leader>uc", utils.view_configuration },
-}
-
 -- Добавляем копирование всех найденных на gy
-vim.keymap.set('n', 'gy', function()
-  require('plugins.mysearch').copy_all_matches()
-end, { noremap = true, silent = true })
+-- vim.keymap.set('n', 'gy', function()
+--   require('plugins.mysearch').copy_all_matches()
+-- end, { noremap = true, silent = true })
 
 -- Esc убирает подсветку как обычно
 -- Можно настроить, если хочется автоматом:
-vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { noremap = true, silent = true })
+vim.keymap.set("n", "<Esc>", ":nohlsearch<CR><Esc>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { silent = true })
 
 vim.keymap.set("n", "<C-k>", ":m .-2<CR>==", { silent = true })
@@ -49,5 +41,4 @@ vim.keymap.set("n", "<leader>wth", ":ToggleTerm direction=horizontal<CR>")
 vim.keymap.set("n", "<leader>wtv", ":ToggleTerm direction=vertical size=40<CR>")
 
 -- WhichKey ( Must be last! )
-vim.keymap.set("n", "<leader>o", ":Neotree float git_status<CR>")
-
+-- vim.keymap.set("n", "<leader>o", ":Neotree float git_status<CR>")
