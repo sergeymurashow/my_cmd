@@ -1,0 +1,136 @@
+return {
+  {
+    "mfussenegger/nvim-dap",
+  },
+
+  {
+    "rcarriga/nvim-dap-ui",
+    "nvim-neotest/nvim-nio",
+    config = function()
+      local dap = require("dap")
+      local dapui = require("dapui")
+
+      dapui.setup()
+
+      -- Автоматически открывать UI и REPL
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        vim.notify("[DAP] Debugger started", vim.log.levels.INFO)
+        dapui.open()
+        vim.cmd("DapRepl") -- 👈 REPL
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+
+      -- Toggle UI по команде
+      vim.api.nvim_create_user_command("DapToggleUI", function()
+        dapui.toggle()
+      end, {})
+
+      vim.keymap.set("n", "<leader>du", "<cmd>DapToggleUI<CR>", { desc = "DAP Toggle UI" })
+    end,
+  },
+
+  {
+    -- ручной адаптер
+    "mxsdev/nvim-dap-vscode-js",
+    lazy = false,
+    dependencies = { "mfussenegger/nvim-dap" },
+
+    init = function()
+      local dap = require("dap")
+
+      dap.adapters["pwa-node"] = function(callback)
+        local stdout = vim.loop.new_pipe(false)
+        local stderr = vim.loop.new_pipe(false)
+        local buffer = ""
+        local debugger_path = vim.fn.stdpath("data") .. "/vscode-js-debug/out/src/vsDebugServer.js"
+
+        local handle = vim.loop.spawn("node", {
+          args = { debugger_path },
+          stdio = { nil, stdout, stderr },
+        }, function(code)
+          stdout:close()
+          stderr:close()
+          handle:close()
+          vim.schedule(function()
+            vim.notify("[DAP] node exited with code: " .. tostring(code), vim.log.levels.WARN)
+          end)
+        end)
+
+        stdout:read_start(function(_, chunk)
+          if chunk then
+            buffer = buffer .. chunk
+            local port = tonumber(buffer:match("(%d+)"))
+            if port then
+              vim.schedule(function()
+                vim.notify("✅ DAP listening on port " .. port, vim.log.levels.INFO)
+                callback({ type = "server", host = "127.0.0.1", port = port })
+              end)
+              stdout:read_stop()
+              stderr:read_stop()
+            end
+          end
+        end)
+
+        stderr:read_start(function(_, chunk)
+          if chunk then
+            vim.schedule(function()
+              vim.notify("[DAP stderr] " .. chunk, vim.log.levels.ERROR)
+            end)
+          end
+        end)
+      end
+    end,
+
+    config = function()
+      local dap = require("dap")
+
+      dap.configurations.javascript = {
+        {
+          type = "pwa-node",
+          request = "launch",
+          name = "Launch JS",
+          program = "${file}",
+          cwd = "${workspaceFolder}",
+          runtimeExecutable = "node",
+          sourceMaps = true,
+          skipFiles = { "<node_internals>/**" },
+          console = "internalConsole",
+          outputCapture = "std",
+
+          outFiles = { "${workspaceFolder}/**/*.js" },
+          resolveSourceMapLocations = {
+            "${workspaceFolder}/**",
+            "!**/node_modules/**"
+          },
+        },
+      }
+
+      dap.configurations.typescript = {
+        {
+          type = "pwa-node",
+          request = "launch",
+          name = "Launch TS (ts-node)",
+          program = "${file}",
+          cwd = "${workspaceFolder}",
+          runtimeExecutable = "node",
+          runtimeArgs = { "-r", "ts-node/register" },
+          sourceMaps = true,
+          skipFiles = { "<node_internals>/**" },
+          console = "internalConsole",
+          outputCapture = "std",
+
+          outFiles = { "${workspaceFolder}/**/*.js" },
+          resolveSourceMapLocations = {
+            "${workspaceFolder}/**",
+            "!**/node_modules/**"
+          },
+        },
+      }
+    end,
+  },
+}
